@@ -36,9 +36,9 @@ export function MediumSync() {
   };
 
   return (
-    <section className="mt-10 rounded-xl border border-[var(--card-border)] bg-card p-5 shadow-sm">
-      <h2 className="text-lg font-semibold text-foreground">Sync Medium articles</h2>
-      <p className="mt-1 text-sm text-muted">
+    <section className="mt-10 rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg-secondary)] p-5">
+      <h2 className="text-lg font-semibold text-[var(--apple-text)]">Sync Medium articles</h2>
+      <p className="mt-1 text-sm text-[var(--apple-text-secondary)]">
         Pull your latest Medium articles into the blog using your public RSS feed (no account or API key needed).
         Medium’s feed includes your <strong>10 most recent</strong> articles. Run sync whenever you publish to keep the list updated.
       </p>
@@ -49,13 +49,13 @@ export function MediumSync() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSync()}
-          className="min-w-[200px] flex-1 rounded-lg border border-[var(--card-border)] bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+          className="min-w-[200px] flex-1 rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg)] px-3 py-2 text-sm text-[var(--apple-text)] placeholder:text-[var(--apple-text-secondary)] focus:border-[var(--apple-blue)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-light)]"
         />
         <button
           type="button"
           onClick={handleSync}
           disabled={loading}
-          className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:opacity-95 disabled:opacity-50 focus-visible:outline-offset-2"
+          className="rounded-[var(--radius)] bg-[var(--apple-blue)] px-4 py-2 text-sm font-normal text-white transition hover:opacity-90 disabled:opacity-50 focus-visible:outline-offset-2"
         >
           {loading ? "Syncing…" : "Sync now"}
         </button>
@@ -64,9 +64,9 @@ export function MediumSync() {
         <p className="mt-3 text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
       {result && (
-        <p className="mt-3 text-sm text-muted">
+        <p className="mt-3 text-sm text-[var(--apple-text-secondary)]">
           Synced {result.total} articles ({result.created} new, {result.updated} updated).{" "}
-          <a href="/blog" className="text-accent hover:underline">
+          <a href="/blog" className="link-apple">
             View blog →
           </a>
         </p>

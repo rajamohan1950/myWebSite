@@ -4,21 +4,21 @@ import { MediumSync } from "./MediumSync";
 export default function Dashboard() {
   return (
     <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="card max-w-2xl rounded-2xl p-8 sm:p-10">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          <span className="text-accent">Dashboard</span>
+      <div className="max-w-2xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+        <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-tight text-[var(--apple-text)]">
+          Dashboard
         </h1>
-        <p className="mt-2 text-muted">
+        <p className="mt-2 text-[var(--apple-text-secondary)]">
           Manage your content, posts, and agents from here. (Auth and more
           sections will be added later.)
         </p>
 
-        <ul className="mt-10 list-none space-y-1 rounded-xl border border-[var(--card-border)] bg-card p-2 shadow-sm" role="list">
+        <ul className="mt-10 list-none space-y-1 rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg-secondary)] p-2" role="list">
           <li>
             <Link
               href="/dashboard"
               aria-current="page"
-              className="block rounded-lg bg-[var(--tab-active-bg)] px-4 py-3 text-sm font-semibold text-[var(--tab-active-text)] focus-visible:outline-offset-2"
+              className="block rounded-[var(--radius)] bg-[var(--apple-blue)] px-4 py-3 text-sm font-normal text-white focus-visible:outline-offset-2"
             >
               Overview (current)
             </Link>
@@ -26,13 +26,13 @@ export default function Dashboard() {
           <li>
             <Link
               href="/dashboard/posts"
-              className="block rounded-lg px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted/10 focus-visible:outline-offset-2"
+              className="block rounded-[var(--radius)] px-4 py-3 text-sm font-normal text-[var(--apple-text)] transition hover:bg-[var(--apple-bg-tertiary)] focus-visible:outline-offset-2"
             >
               Posts / CMS
             </Link>
           </li>
           <li>
-            <span className="block rounded-lg px-4 py-3 text-muted" aria-disabled>
+            <span className="block rounded-[var(--radius)] px-4 py-3 text-[var(--apple-text-secondary)]" aria-disabled>
               Agent (coming soon)
             </span>
           </li>

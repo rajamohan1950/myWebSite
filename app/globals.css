@@ -1,82 +1,85 @@
 @import "tailwindcss";
 
-/* ========== Design system: colors, wallpaper, tabs ========== */
+/* ========== Apple-inspired design system ========== */
 :root {
-  /* Core */
-  --foreground: #0f172a;
-  --muted: #475569;
-  --border: rgba(15, 23, 42, 0.08);
-  --accent: #0d9488;
-  --accent-hover: #0f766e;
-  --accent-light: #ccfbf1;
-  --secondary: #7c3aed;
-  --secondary-light: #ede9fe;
-  --card-bg: #ffffff;
-  --card-shadow: 0 4px 24px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
-  --card-border: rgba(15, 23, 42, 0.06);
+  /* Apple-style palette */
+  --apple-bg: #ffffff;
+  --apple-bg-secondary: #fbfbfd;
+  --apple-bg-tertiary: #f5f5f7;
+  --apple-text: #1d1d1f;
+  --apple-text-secondary: #6e6e73;
+  --apple-link: #06c;
+  --apple-link-hover: #0077ed;
+  --apple-blue: #0071e3;
+  --apple-blue-hover: #0077ed;
+  --apple-border: rgba(0, 0, 0, 0.08);
+  --apple-nav-bg: rgba(251, 251, 253, 0.8);
+  --apple-nav-border: rgba(0, 0, 0, 0.06);
 
-  /* Nav / tabs */
-  --nav-bg: rgba(255, 255, 255, 0.85);
-  --nav-border: rgba(15, 23, 42, 0.08);
-  --nav-shadow: 0 1px 0 rgba(15, 23, 42, 0.05);
-  --tab-active-bg: #0d9488;
-  --tab-active-text: #ffffff;
-  --tab-inactive: #64748b;
-  --tab-hover-bg: rgba(13, 148, 136, 0.08);
+  /* Semantic (keep for compatibility) */
+  --foreground: var(--apple-text);
+  --muted: var(--apple-text-secondary);
+  --border: var(--apple-border);
+  --accent: var(--apple-blue);
+  --accent-hover: var(--apple-blue-hover);
+  --accent-light: rgba(0, 113, 227, 0.08);
+  --card-bg: var(--apple-bg);
+  --card-border: var(--apple-border);
+  --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 
-  /* Wallpaper background — gradient mesh */
-  --bg-base: #f8fafc;
-  --bg-blob-1: #e0f2fe;
-  --bg-blob-2: #fce7f3;
-  --bg-blob-3: #ddd6fe;
-  --bg-blob-4: #ccfbf1;
-
-  --focus-ring: 2px solid var(--accent);
-  --focus-offset: 2px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --container: 800px;
-  --space-page-y: clamp(2rem, 6vw, 4rem);
-  --space-page-x: clamp(1.25rem, 4vw, 2rem);
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  /* Layout */
+  --container: 980px;
+  --container-wide: 1200px;
+  --space-page-y: clamp(3rem, 8vw, 6rem);
+  --space-page-x: clamp(1.5rem, 5vw, 2.5rem);
+  --apple-nav-height: 44px;
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --text-balance: balance;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --focus-ring: 2px solid var(--apple-blue);
+  --focus-offset: 2px;
+
+  /* Apple typography scale */
+  --apple-font-display: 56px;
+  --apple-font-headline: 40px;
+  --apple-font-title: 28px;
+  --apple-font-subhead: 21px;
+  --apple-font-body: 17px;
+  --apple-font-caption: 12px;
+  --apple-letter-tight: -0.025em;
+  --apple-letter-body: -0.022em;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground: #f1f5f9;
-    --muted: #94a3b8;
-    --border: rgba(241, 245, 249, 0.1);
-    --accent: #2dd4bf;
-    --accent-hover: #5eead4;
-    --accent-light: rgba(45, 212, 191, 0.15);
-    --secondary: #a78bfa;
-    --secondary-light: rgba(167, 139, 250, 0.15);
-    --card-bg: rgba(30, 41, 59, 0.7);
-    --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.05);
-    --card-border: rgba(241, 245, 249, 0.08);
+    --apple-bg: #000000;
+    --apple-bg-secondary: #1d1d1f;
+    --apple-bg-tertiary: #2d2d2f;
+    --apple-text: #f5f5f7;
+    --apple-text-secondary: #a1a1a6;
+    --apple-link: #2997ff;
+    --apple-link-hover: #4dabff;
+    --apple-blue: #2997ff;
+    --apple-blue-hover: #4dabff;
+    --apple-border: rgba(255, 255, 255, 0.08);
+    --apple-nav-bg: rgba(29, 29, 31, 0.72);
+    --apple-nav-border: rgba(255, 255, 255, 0.06);
 
-    --nav-bg: rgba(15, 23, 42, 0.88);
-    --nav-border: rgba(241, 245, 249, 0.08);
-    --nav-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
-    --tab-active-bg: #2dd4bf;
-    --tab-active-text: #0f172a;
-    --tab-inactive: #94a3b8;
-    --tab-hover-bg: rgba(45, 212, 191, 0.15);
-
-    --bg-base: #0f172a;
-    --bg-blob-1: rgba(30, 58, 138, 0.4);
-    --bg-blob-2: rgba(88, 28, 135, 0.3);
-    --bg-blob-3: rgba(45, 212, 191, 0.15);
-    --bg-blob-4: rgba(6, 78, 59, 0.25);
+    --foreground: var(--apple-text);
+    --muted: var(--apple-text-secondary);
+    --border: var(--apple-border);
+    --accent: var(--apple-blue);
+    --accent-hover: var(--apple-blue-hover);
+    --accent-light: rgba(41, 151, 255, 0.12);
+    --card-bg: var(--apple-bg-secondary);
+    --card-border: var(--apple-border);
+    --card-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
   }
 }
 
 @theme inline {
-  --color-background: var(--bg-base);
+  --color-background: var(--apple-bg-secondary);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
@@ -84,71 +87,9 @@
   --color-border: var(--border);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius-lg);
-}
-
-/* ========== Wallpaper: beach background ========== */
-.page-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: var(--bg-base);
-  overflow: hidden;
-}
-
-/* Beach image — replace with url("/beach.jpg") if you add your own image to public/ */
-.page-backdrop .wallpaper-image {
-  position: absolute;
-  inset: 0;
-  background-image: url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-/* Overlay so cards and text stay readable */
-.page-backdrop .wallpaper-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(248, 250, 252, 0.92) 0%,
-    rgba(241, 245, 249, 0.88) 50%,
-    rgba(226, 232, 240, 0.9) 100%
-  );
-  pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  .page-backdrop .wallpaper-overlay {
-    background: linear-gradient(
-      160deg,
-      rgba(15, 23, 42, 0.92) 0%,
-      rgba(30, 41, 59, 0.9) 50%,
-      rgba(15, 23, 42, 0.94) 100%
-    );
-  }
-}
-
-/* Optional: very subtle grain for texture */
-.page-backdrop .grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
-  background-size: 64px 64px;
-  pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  .page-backdrop .grid-overlay {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  }
 }
 
 /* ========== Base ========== */
@@ -157,25 +98,22 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  html { scroll-behavior: auto; }
 }
 
 body {
-  background: var(--bg-base);
+  background: var(--apple-bg-secondary);
   color: var(--foreground);
   font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.65;
+  font-size: var(--apple-font-body);
+  line-height: 1.47059;
+  font-weight: 400;
+  letter-spacing: var(--apple-letter-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-:focus {
-  outline: none;
-}
-
+:focus { outline: none; }
 :focus-visible {
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
@@ -185,26 +123,115 @@ a:focus-visible,
 button:focus-visible {
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
+}
+
+/* Apple typography classes */
+.apple-display {
+  font-size: clamp(40px, 8vw, var(--apple-font-display));
+  font-weight: 600;
+  letter-spacing: var(--apple-letter-tight);
+  line-height: 1.05;
+}
+.apple-headline {
+  font-size: clamp(28px, 4vw, var(--apple-font-headline));
+  font-weight: 600;
+  letter-spacing: var(--apple-letter-tight);
+  line-height: 1.1;
+}
+.apple-title {
+  font-size: var(--apple-font-title);
+  font-weight: 600;
+  letter-spacing: var(--apple-letter-tight);
+  line-height: 1.15;
+}
+.apple-subhead {
+  font-size: var(--apple-font-subhead);
+  font-weight: 400;
+  letter-spacing: var(--apple-letter-body);
+  line-height: 1.2;
+}
+.apple-body {
+  font-size: var(--apple-font-body);
+  font-weight: 400;
+  letter-spacing: var(--apple-letter-body);
+  line-height: 1.47;
+}
+.apple-caption {
+  font-size: var(--apple-font-caption);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.33;
 }
 
 h1, h2, h3 {
-  text-wrap: var(--text-balance);
-  line-height: 1.25;
+  letter-spacing: var(--apple-letter-tight);
+  font-weight: 600;
+  line-height: 1.1;
 }
 
-/* ========== Content cards (elevated panels on wallpaper) ========== */
+/* ========== Apple-style components ========== */
 .card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--card-shadow);
-  backdrop-filter: blur(12px);
 }
 
-.card-accent-border {
-  border-left: 4px solid var(--accent);
+.link-apple {
+  color: var(--apple-link);
+  text-decoration: none;
 }
+.link-apple:hover {
+  text-decoration: underline;
+  color: var(--apple-link-hover);
+}
+
+@media (prefers-color-scheme: dark) {
+  .link-apple { color: var(--apple-link); }
+  .link-apple:hover { color: var(--apple-link-hover); }
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 20px;
+  background: var(--apple-blue);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  border-radius: 980px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, opacity 0.2s;
+}
+.btn-primary:hover {
+  background: var(--apple-blue-hover);
+}
+.btn-primary:active { opacity: 0.9; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 20px;
+  background: transparent;
+  color: var(--apple-blue);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  border-radius: 980px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.btn-secondary:hover { opacity: 0.8; }
 
 /* ========== Skip link ========== */
 .skip-link {
@@ -212,14 +239,13 @@ h1, h2, h3 {
   top: -100%;
   left: var(--space-page-x);
   z-index: 100;
-  padding: 0.75rem 1rem;
-  background: var(--accent);
+  padding: 12px 20px;
+  background: var(--apple-blue);
   color: white;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border-radius: 8px;
   transition: top 0.2s ease;
 }
-
 .skip-link:focus {
   top: 1rem;
   outline: 2px solid white;

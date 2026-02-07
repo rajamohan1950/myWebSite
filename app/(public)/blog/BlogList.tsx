@@ -89,7 +89,7 @@ export function BlogList({ items }: { items: BlogItem[] }) {
           value={q}
           onChange={(e) => onSearchChange(e.target.value)}
           aria-label="Search blog"
-          className="w-full rounded-lg border border-[var(--card-border)] bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 sm:max-w-xs"
+          className="w-full rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg)] px-3 py-2.5 text-[15px] text-[var(--apple-text)] placeholder:text-[var(--apple-text-secondary)] focus:border-[var(--apple-blue)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-light)] sm:max-w-xs"
         />
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => (
@@ -97,10 +97,10 @@ export function BlogList({ items }: { items: BlogItem[] }) {
               key={c}
               type="button"
               onClick={() => onCategoryChange(c)}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition focus-visible:outline-offset-2 ${
+              className={`rounded-full px-4 py-2 text-sm font-normal transition focus-visible:outline-offset-2 ${
                 category === c
-                  ? "bg-accent text-white"
-                  : "bg-muted/20 text-muted hover:bg-muted/30 hover:text-foreground"
+                  ? "bg-[var(--apple-blue)] text-white"
+                  : "bg-[var(--apple-bg-tertiary)] text-[var(--apple-text-secondary)] hover:text-[var(--apple-text)]"
               }`}
             >
               {c}
@@ -110,7 +110,7 @@ export function BlogList({ items }: { items: BlogItem[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-muted">
+        <p className="text-[var(--apple-text-secondary)]">
           {items.length === 0
             ? "No posts yet. Check back later or sync Medium from the dashboard."
             : "No posts match your search or category."}
@@ -129,20 +129,20 @@ export function BlogList({ items }: { items: BlogItem[] }) {
                 <li key={`post-${item.id}`}>
                   <Link
                     href={`/blog/${item.slug}`}
-                    className="block rounded-xl border border-[var(--card-border)] p-5 transition hover:border-accent/30 hover:shadow-md"
+                    className="block rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg-secondary)] p-5 transition hover:border-[var(--apple-text-secondary)]/30"
                   >
-                    <span className="inline-block rounded bg-muted/20 px-2 py-0.5 text-xs font-medium text-muted">
+                    <span className="inline-block rounded bg-[var(--accent-light)] px-2 py-0.5 text-xs font-medium text-[var(--apple-link)]">
                       {cat}
                     </span>
-                    <h2 className="mt-2 text-lg font-semibold text-foreground">
+                    <h2 className="mt-2 text-lg font-semibold text-[var(--apple-text)]">
                       {item.title}
                     </h2>
                     {item.excerpt && (
-                      <p className="mt-1 text-sm text-muted line-clamp-2">
+                      <p className="mt-1 text-sm text-[var(--apple-text-secondary)] line-clamp-2">
                         {item.excerpt}
                       </p>
                     )}
-                    <p className="mt-2 text-xs text-muted">{dateStr}</p>
+                    <p className="mt-2 text-xs text-[var(--apple-text-secondary)]">{dateStr}</p>
                   </Link>
                 </li>
               );
@@ -153,20 +153,20 @@ export function BlogList({ items }: { items: BlogItem[] }) {
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block rounded-xl border border-[var(--card-border)] p-5 transition hover:border-accent/30 hover:shadow-md"
+                  className="block rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg-secondary)] p-5 transition hover:border-[var(--apple-text-secondary)]/30"
                 >
-                  <span className="inline-block rounded bg-[var(--secondary-light)] px-2 py-0.5 text-xs font-medium text-[var(--secondary)] dark:bg-[var(--secondary-light)]">
+                  <span className="inline-block rounded bg-[var(--apple-bg-tertiary)] px-2 py-0.5 text-xs font-medium text-[var(--apple-text-secondary)]">
                     {cat}
                   </span>
-                  <h2 className="mt-2 text-lg font-semibold text-foreground">
+                  <h2 className="mt-2 text-lg font-semibold text-[var(--apple-text)]">
                     {item.title}
                   </h2>
                   {item.excerpt && (
-                    <p className="mt-1 text-sm text-muted line-clamp-2">
+                    <p className="mt-1 text-sm text-[var(--apple-text-secondary)] line-clamp-2">
                       {item.excerpt}
                     </p>
                   )}
-                  <p className="mt-2 text-xs text-muted">{dateStr} · Read on Medium →</p>
+                  <p className="mt-2 text-xs text-[var(--apple-text-secondary)]">{dateStr} · Read on Medium →</p>
                 </a>
               </li>
             );

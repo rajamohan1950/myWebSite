@@ -2,6 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ShareLinkedInButton } from "@/components/ShareLinkedInButton";
+
+function useBaseUrl() {
+  const [baseUrl, setBaseUrl] = useState<string>("");
+  useEffect(() => {
+    setBaseUrl(window.location.origin);
+  }, []);
+  return baseUrl;
+}
 
 type Post = {
   id: number;
@@ -14,6 +23,7 @@ type Post = {
 };
 
 export default function DashboardPostsPage() {
+  const baseUrl = useBaseUrl();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,55 +39,54 @@ export default function DashboardPostsPage() {
 
   return (
     <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="card max-w-4xl rounded-2xl p-8 sm:p-10">
+      <div className="max-w-4xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            <span className="text-accent">Posts</span>
+          <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-tight text-[var(--apple-text)]">
+            Posts
           </h1>
-          <Link
-            href="/dashboard/posts/new"
-            className="inline-flex min-h-[44px] items-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-95 focus-visible:outline-offset-2"
-          >
+          <Link href="/dashboard/posts/new" className="btn-primary">
             New post
           </Link>
         </div>
 
         {loading ? (
-          <p className="mt-6 text-muted">Loading…</p>
+          <p className="mt-6 text-[var(--apple-text-secondary)]">Loading…</p>
         ) : posts.length === 0 ? (
-          <p className="mt-6 text-muted">No posts yet. Create one to get started.</p>
+          <p className="mt-6 text-[var(--apple-text-secondary)]">No posts yet. Create one to get started.</p>
         ) : (
           <ul className="mt-8 list-none space-y-2" role="list">
             {posts.map((post) => (
               <li key={post.id}>
-                <Link
-                  href={`/dashboard/posts/${post.id}/edit`}
-                  className="card flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--card-border)] p-4 transition hover:border-accent/30 hover:shadow-md"
-                >
-                  <div className="min-w-0">
-                    <span className="font-semibold text-foreground">{post.title}</span>
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg-secondary)] p-4 transition hover:border-[var(--apple-text-secondary)]/30">
+                  <Link href={`/dashboard/posts/${post.id}/edit`} className="min-w-0 flex-1">
+                    <span className="font-semibold text-[var(--apple-text)]">{post.title}</span>
                     {post.excerpt && (
-                      <p className="mt-0.5 truncate text-sm text-muted">{post.excerpt}</p>
+                      <p className="mt-0.5 truncate text-sm text-[var(--apple-text-secondary)]">{post.excerpt}</p>
                     )}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted">
-                    {post.publishedAt ? (
-                      <span className="rounded-full bg-accent/15 px-2 py-0.5 font-medium text-accent">
-                        Published
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-muted/20 px-2 py-0.5">Draft</span>
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    {post.publishedAt && (
+                      <ShareLinkedInButton slug={post.slug} baseUrl={baseUrl || undefined} />
                     )}
-                    <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-2 text-sm text-[var(--apple-text-secondary)]">
+                      {post.publishedAt ? (
+                        <span className="rounded-full bg-[var(--accent-light)] px-2 py-0.5 font-medium text-[var(--apple-link)]">
+                          Published
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-[var(--apple-bg-tertiary)] px-2 py-0.5">Draft</span>
+                      )}
+                      <span>{new Date(post.updatedAt).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                </Link>
+                </div>
               </li>
             ))}
           </ul>
         )}
 
-        <p className="mt-8 text-sm text-muted">
-          <Link href="/blog" className="text-accent hover:underline">
+        <p className="mt-8 text-sm text-[var(--apple-text-secondary)]">
+          <Link href="/blog" className="link-apple">
             View public blog →
           </Link>
         </p>

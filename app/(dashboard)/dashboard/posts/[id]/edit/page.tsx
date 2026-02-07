@@ -52,9 +52,8 @@ export default function EditPostPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!post) return;
+  const savePost = async (): Promise<boolean> => {
+    if (!post) return false;
     setError(null);
     setSaving(true);
     try {
@@ -72,13 +71,27 @@ export default function EditPostPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to update");
-      router.push("/dashboard/posts");
-      router.refresh();
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
+      return false;
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const ok = await savePost();
+    if (ok) {
+      router.push("/dashboard/posts");
+      router.refresh();
+    }
+  };
+
+  const handleSaveAndPreview = async () => {
+    const ok = await savePost();
+    if (ok) window.open(`/blog/preview/${post!.id}`, "_blank", "noopener,noreferrer");
   };
 
   if (loading) {
@@ -204,13 +217,21 @@ export default function EditPostPage() {
             </label>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               type="submit"
               disabled={saving}
               className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-95 disabled:opacity-50 focus-visible:outline-offset-2"
             >
               {saving ? "Saving…" : "Save changes"}
+            </button>
+            <button
+              type="button"
+              disabled={saving}
+              onClick={handleSaveAndPreview}
+              className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted/10 disabled:opacity-50 focus-visible:outline-offset-2"
+            >
+              {saving ? "Saving…" : "Save & Preview"}
             </button>
             <Link
               href="/dashboard/posts"

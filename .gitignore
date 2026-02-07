@@ -40,6 +40,9 @@ yarn-error.log*
 *.db
 local.db
 
+# private resume uploads (password-protected)
+/uploads
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

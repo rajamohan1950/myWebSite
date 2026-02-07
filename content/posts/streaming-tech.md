@@ -2,9 +2,10 @@
 title: "Designing a High-Throughput Kafka Pipeline"
 slug: "streaming-tech"
 excerpt: "Kafka doesn't magically scale. Math + measurements + clear SLOs make it scale. If you want a concrete plan for your workload, share your throughput, message size, measured consumer capacity, retention, and hardware profile."
-publishedAt: "2026-02-07T04:50:16.000Z"
+category: ""
+publishedAt: "2026-02-07T10:26:23.000Z"
 createdAt: "2026-02-07T04:50:16.000Z"
-updatedAt: "2026-02-07T04:50:16.000Z"
+updatedAt: "2026-02-07T10:26:25.000Z"
 ---
 Designing a High-Throughput Kafka Pipeline (Without Guesswork)
 

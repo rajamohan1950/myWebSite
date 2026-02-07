@@ -1,15 +1,15 @@
 export default function VideoResume() {
   return (
     <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="card max-w-3xl rounded-2xl p-8 sm:p-10">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          <span className="text-accent">Video Resume</span>
+      <div className="max-w-3xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+        <h1 className="text-[clamp(1.75rem,4vw,2.25rem)] font-semibold tracking-tight text-[var(--apple-text)]">
+          Video Resume
         </h1>
-        <p className="mt-2 text-muted">
+        <p className="mt-2 text-[var(--apple-text-secondary)]">
           A short video introduction.
         </p>
 
-        <div className="mt-10 aspect-video w-full overflow-hidden rounded-xl border-2 border-[var(--card-border)] bg-black/5 shadow-lg dark:bg-white/5">
+        <div className="mt-10 aspect-video w-full overflow-hidden rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg-tertiary)]">
           <iframe
             src="https://www.youtube.com/embed/k2tL1DBVmPs"
             title="Video resume — Rajamohan Jabbala"

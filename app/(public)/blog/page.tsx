@@ -41,18 +41,18 @@ export default async function BlogArchivePage() {
 
   return (
     <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="card max-w-3xl rounded-2xl p-8 sm:p-10">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          <span className="text-accent">Blog</span>
+      <section className="rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+        <h1 className="text-[clamp(1.75rem,4vw,2.25rem)] font-semibold tracking-tight text-[var(--apple-text)]">
+          Blog
         </h1>
-        <p className="mt-2 text-muted">
+        <p className="mt-2 text-[var(--apple-text-secondary)]">
           Posts and updates by category. Use search or filters; your choice is kept in the URL.
         </p>
 
         <div className="mt-10">
           <BlogList items={items} />
         </div>
-      </div>
+      </section>
     </main>
   );
 }
