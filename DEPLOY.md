@@ -1,6 +1,76 @@
 # Deploy to the cloud and use www.rajamohanjabbala.com
 
-Your app uses **SQLite** and **file uploads** (resumes), so you need a host with persistent storage. **Railway** (recommended) and **Render** support this.
+**Free option (no payment, works in India):** Use **Vercel + Turso + Vercel Blob** — see [Deploy on Vercel (free)](#deploy-on-vercel-free) below.
+
+**Paid / persistent VM:** Railway or Render (SQLite + disk).
+
+**Storage & deploys:** Each new deploy only updates app code. **Data is not lost:** on Vercel, Turso (DB) and Vercel Blob (resume files) persist across deploys. On Railway/Render, the `/data` volume persists. Do not remove the Turso DB, Blob store, or volume when deploying.
+
+---
+
+## Deploy on Vercel (free)
+
+**No credit card.** Good for India (Vercel edge). DB = Turso (free SQLite), files = Vercel Blob (free tier).
+
+### 1. Create Turso DB (free)
+
+```bash
+# Install Turso CLI: https://docs.turso.tech/cli/install
+turso auth signup   # or turso auth login
+turso db create my-website-db
+turso db show my-website-db   # copy the URL
+turso db tokens create my-website-db   # copy the token
+```
+
+### 2. Deploy on Vercel
+
+1. Go to **[vercel.com](https://vercel.com)** → **Sign up with GitHub**.
+2. **Add New** → **Project** → **Import** `rajamohan1950/myWebSite`.
+3. **Environment Variables** (add these before Deploy):
+
+   | Name | Value |
+   |------|--------|
+   | `TURSO_DATABASE_URL` | *(URL from `turso db show`)* |
+   | `TURSO_AUTH_TOKEN` | *(token from `turso db tokens create`)* |
+   | `BLOB_READ_WRITE_TOKEN` | *(create in Vercel: Storage → Create Database → Blob → copy token)* |
+   | `NEXT_PUBLIC_SITE_URL` | `https://www.rajamohanjabbala.com` |
+   | `NEXT_PUBLIC_LINKEDIN_URL` | `https://www.linkedin.com/in/jabbalarajamohan` |
+   | `RESUMES_PASSWORD` | *(your password)* |
+
+4. **Deploy**. After first deploy, run schema once (local with Turso env):
+
+   ```bash
+   TURSO_DATABASE_URL=libsql://... TURSO_AUTH_TOKEN=... npx drizzle-kit push
+   ```
+
+5. **Custom domain:** Project → **Settings** → **Domains** → add **www.rajamohanjabbala.com**. Then in GoDaddy (or your DNS), use the **stable** target below — **never** point to a deployment URL like `my-website-xxxxx-rajamohans-projects.vercel.app`, because that changes on every deploy.
+
+Vercel Blob: in dashboard, **Storage** → **Create Database** → **Blob**; then in the Blob store, copy **BLOB_READ_WRITE_TOKEN** into the project env vars.
+
+### GoDaddy DNS (one-time — URL never changes)
+
+Use this so your domain always points to Vercel without updating after each deploy.
+
+1. In **Vercel**: Project → **Settings** → **Domains** → add **www.rajamohanjabbala.com**. Note the target Vercel shows (usually `cname.vercel-dns.com`).
+2. In **GoDaddy**: Domain → **DNS** (or **Manage DNS**).
+3. **Remove** any CNAME for `www` that points to an old Vercel deployment URL (e.g. `my-website-ps027f5t1-rajamohans-projects.vercel.app`).
+4. **Add** (or edit) a **CNAME** record:
+   - **Name:** `www` (or `www.rajamohanjabbala.com` depending on GoDaddy’s UI)
+   - **Value / Points to:** `cname.vercel-dns.com`
+   - **TTL:** 600 or 1 hour
+5. Save. DNS can take up to 48 hours to propagate (often minutes).
+
+After this, **www.rajamohanjabbala.com** always goes to Vercel’s edge; Vercel serves the **current production** deployment. You never need to change GoDaddy when you redeploy.
+
+### 404 even though domain shows “Valid Configuration”
+
+1. **Which URL gives 404?** Try both in an incognito window:
+   - **https://www.rajamohanjabbala.com**
+   - Your project’s **Vercel URL** (e.g. **https://my-website-phi-ruddy.vercel.app**)
+2. **If the Vercel URL works but www does not:** The custom domain may be on a *different* Vercel project. In Vercel → **Settings** → **Domains**, confirm **www.rajamohanjabbala.com** is listed under *this* project (the one you deploy to). If it’s on another project, remove it there and add it to this project.
+3. **If both give 404:** There may be no successful Production deployment. In Vercel → **Deployments**, check the latest deployment: status must be **Ready** and it must be **Production**. If the latest failed or is “Preview”, fix the build or use **Redeploy** on a successful one and set it as Production.
+4. **If you use GoDaddy forwarding** (e.g. rajamohanjabbala.com → www): set “Forward to” to **https://www.rajamohanjabbala.com** only. Do not forward to any `*.vercel.app` URL.
+5. **Clear cache:** Try a different browser or incognito; wait a few minutes and try again.
 
 ---
 

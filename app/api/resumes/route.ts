@@ -3,21 +3,30 @@ import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { resumes } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
-import { isAuthenticated, COOKIE_NAME } from "@/lib/resumes-auth";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
+import { isAuthenticated, COOKIE_NAME, normalizeEnvPassword } from "@/lib/resumes-auth";
+import { putResume } from "@/lib/blob";
 import { randomUUID } from "crypto";
+import path from "path";
 
-const UPLOAD_DIR = process.env.UPLOADS_DIR
-  ? path.join(process.env.UPLOADS_DIR, "uploads", "resumes")
-  : path.join(process.cwd(), "uploads", "resumes");
+type FileLike = File | (Blob & { name?: string });
 
-async function ensureUploadDir() {
-  await mkdir(UPLOAD_DIR, { recursive: true });
+function isFileLike(value: unknown): value is FileLike {
+  return (
+    value instanceof File ||
+    (typeof value === "object" &&
+      value !== null &&
+      "arrayBuffer" in value &&
+      typeof (value as Blob).arrayBuffer === "function")
+  );
+}
+
+function getFileName(value: FileLike): string {
+  if (value instanceof File) return value.name?.trim() || "resume";
+  return (value as Blob & { name?: string }).name?.trim() || "resume";
 }
 
 export async function GET() {
-  const password = process.env.RESUMES_PASSWORD;
+  const password = normalizeEnvPassword(process.env.RESUMES_PASSWORD);
   if (!password) {
     return NextResponse.json(
       { error: "Resumes not configured" },
@@ -44,7 +53,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const password = process.env.RESUMES_PASSWORD;
+  const password = normalizeEnvPassword(process.env.RESUMES_PASSWORD);
   if (!password) {
     return NextResponse.json(
       { error: "Resumes not configured" },
@@ -61,43 +70,69 @@ export async function POST(request: NextRequest) {
   let formData: FormData;
   try {
     formData = await request.formData();
-  } catch {
+  } catch (e) {
     return NextResponse.json({ error: "Invalid form" }, { status: 400 });
   }
 
-  const file = formData.get("file");
-  if (!file || !(file instanceof File)) {
+  const fileList = formData.getAll("file");
+  const files = fileList.filter(isFileLike) as FileLike[];
+  if (files.length === 0) {
     return NextResponse.json(
-      { error: "No file uploaded (use field name 'file')" },
+      { error: "No files uploaded (use field name 'file')" },
       { status: 400 }
     );
   }
 
-  const name = file.name.trim() || "resume";
-  const ext = path.extname(name) || ".pdf";
   const allowed = [".pdf", ".doc", ".docx"];
-  if (!allowed.includes(ext.toLowerCase())) {
+  const inserted: { id: number; displayName: string; uploadedAt: string }[] = [];
+
+  for (const file of files) {
+    const name = getFileName(file) || "resume";
+    const ext = path.extname(name) || ".pdf";
+    if (!allowed.includes(ext.toLowerCase())) continue;
+
+    const storedFileName = `${randomUUID()}${ext}`;
+    let buffer: Buffer;
+    try {
+      buffer = Buffer.from(await (file as File | Blob).arrayBuffer());
+    } catch {
+      continue;
+    }
+    try {
+      await putResume(storedFileName, buffer);
+    } catch (err) {
+      console.error("putResume error:", err);
+      return NextResponse.json(
+        { error: "Storage failed. Check BLOB_READ_WRITE_TOKEN or UPLOADS_DIR." },
+        { status: 500 }
+      );
+    }
+
+    const [row] = await db
+      .insert(resumes)
+      .values({
+        displayName: name,
+        storedFileName,
+        mimeType: file.type || null,
+        uploadedAt: new Date(),
+      })
+      .returning();
+
+    if (row) {
+      inserted.push({
+        id: row.id,
+        displayName: row.displayName,
+        uploadedAt: row.uploadedAt instanceof Date ? row.uploadedAt.toISOString() : String(row.uploadedAt),
+      });
+    }
+  }
+
+  if (inserted.length === 0) {
     return NextResponse.json(
       { error: "Only PDF and Word documents allowed" },
       { status: 400 }
     );
   }
 
-  await ensureUploadDir();
-  const storedFileName = `${randomUUID()}${ext}`;
-  const filePath = path.join(UPLOAD_DIR, storedFileName);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(filePath, buffer);
-
-  const [inserted] = await db
-    .insert(resumes)
-    .values({
-      displayName: name,
-      storedFileName,
-      mimeType: file.type || null,
-      uploadedAt: new Date(),
-    })
-    .returning();
-
-  return NextResponse.json(inserted, { status: 201 });
+  return NextResponse.json(inserted.length === 1 ? inserted[0] : { added: inserted }, { status: 201 });
 }

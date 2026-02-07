@@ -68,8 +68,8 @@ export default async function BlogPostPage({ params }: Props) {
   });
 
   return (
-    <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <article className="max-w-3xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+    <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+      <article className="mx-auto w-full max-w-[var(--container)] rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 shadow-sm">
         <Link href="/blog" className="text-sm link-apple">
           ← Blog
         </Link>

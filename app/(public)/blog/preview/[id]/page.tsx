@@ -26,8 +26,8 @@ export default async function BlogPreviewPage({ params }: Props) {
     : "Draft";
 
   return (
-    <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <article className="max-w-3xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+    <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+      <article className="mx-auto w-full max-w-[var(--container)] rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Link href="/dashboard/posts" className="text-sm link-apple">
             ← Dashboard

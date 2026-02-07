@@ -38,8 +38,9 @@ export default function DashboardPostsPage() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="max-w-4xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+    <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+      <div className="mx-auto w-full max-w-[var(--container)]">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-tight text-[var(--apple-text)]">
             Posts
@@ -90,6 +91,7 @@ export default function DashboardPostsPage() {
             View public blog →
           </Link>
         </p>
+      </div>
       </div>
     </main>
   );

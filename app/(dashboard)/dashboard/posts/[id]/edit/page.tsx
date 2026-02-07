@@ -118,8 +118,9 @@ export default function EditPostPage() {
   }
 
   return (
-    <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="card max-w-2xl rounded-2xl p-8 sm:p-10">
+    <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+      <div className="mx-auto w-full max-w-[var(--container)]">
+      <div className="card rounded-[var(--radius-lg)] p-8 sm:p-10 shadow-sm max-w-3xl">
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           <span className="text-accent">Edit post</span>
         </h1>
@@ -241,6 +242,7 @@ export default function EditPostPage() {
             </Link>
           </div>
         </form>
+      </div>
       </div>
     </main>
   );

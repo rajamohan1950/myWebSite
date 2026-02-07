@@ -8,6 +8,7 @@ const publicLinks = [
   { href: "/", label: "Home" },
   { href: "/profile", label: "Profile" },
   { href: "/blog", label: "Blog" },
+  { href: "/products", label: "Products" },
   { href: "/linkedin", label: "LinkedIn" },
   { href: "/video-resume", label: "Video Resume" },
   { href: "/book-a-call", label: "Book a Call" },

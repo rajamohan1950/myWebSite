@@ -15,14 +15,14 @@ export default function ResumesPage() {
   const [list, setList] = useState<ResumeItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!authenticated) return;
-    fetch("/api/resumes")
+    fetch("/api/resumes", { credentials: "include" })
       .then((r) => {
         if (r.status === 401) {
           setAuthenticated(false);
@@ -60,27 +60,35 @@ export default function ResumesPage() {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!uploadFile) return;
+    if (uploadFiles.length === 0) return;
     setError(null);
     setUploading(true);
     try {
       const formData = new FormData();
-      formData.set("file", uploadFile);
+      for (const file of uploadFiles) {
+        formData.append("file", file);
+      }
       const res = await fetch("/api/resumes", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
       if (!res.ok) {
         const data = await res.json();
         setError(data.error ?? "Upload failed");
         return;
       }
-      const added = await res.json();
+      const data = await res.json();
+      const addedList = data.added ?? [data];
       setList((prev) => [
-        { id: added.id, displayName: added.displayName, uploadedAt: added.uploadedAt },
+        ...addedList.map((a: { id: number; displayName: string; uploadedAt: string }) => ({
+          id: a.id,
+          displayName: a.displayName,
+          uploadedAt: a.uploadedAt,
+        })),
         ...prev,
       ]);
-      setUploadFile(null);
+      setUploadFiles([]);
     } catch {
       setError("Upload failed");
     } finally {
@@ -152,8 +160,9 @@ export default function ResumesPage() {
 
   if (!authenticated) {
     return (
-      <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-        <div className="max-w-md rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+      <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+        <div className="mx-auto w-full max-w-[var(--container)]">
+        <div className="rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 shadow-sm">
           <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-tight text-[var(--apple-text)]">
             Private Resumes
           </h1>
@@ -189,13 +198,15 @@ export default function ResumesPage() {
             </button>
           </form>
         </div>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="max-w-2xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+    <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+      <div className="mx-auto w-full max-w-[var(--container)]">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 shadow-sm">
         <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-tight text-[var(--apple-text)]">
           My Resumes
         </h1>
@@ -211,22 +222,29 @@ export default function ResumesPage() {
           )}
           <div className="min-w-0 flex-1">
             <label htmlFor="resumes-file" className="block text-sm font-medium text-foreground">
-              Upload PDF or Word
+              Upload PDF or Word (multiple allowed)
             </label>
             <input
               id="resumes-file"
               type="file"
               accept=".pdf,.doc,.docx"
+              multiple
               onChange={(e) => {
-                setUploadFile(e.target.files?.[0] ?? null);
+                const chosen = e.target.files;
+                setUploadFiles(chosen ? Array.from(chosen) : []);
                 setError(null);
               }}
               className="mt-1 w-full rounded-[var(--radius)] border border-[var(--apple-border)] bg-[var(--apple-bg)] px-3 py-2.5 text-sm text-[var(--apple-text)] file:mr-3 file:rounded file:border-0 file:bg-[var(--accent-light)] file:px-3 file:py-1 file:text-[var(--apple-link)]"
             />
+            {uploadFiles.length > 0 && (
+              <p className="mt-1 text-xs text-[var(--apple-text-secondary)]">
+                {uploadFiles.length} file{uploadFiles.length !== 1 ? "s" : ""} selected
+              </p>
+            )}
           </div>
           <button
             type="submit"
-            disabled={!uploadFile || uploading}
+            disabled={uploadFiles.length === 0 || uploading}
             className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:opacity-95 disabled:opacity-50"
           >
             {uploading ? "Uploading…" : "Upload"}
@@ -328,6 +346,7 @@ export default function ResumesPage() {
             </ul>
           )}
         </section>
+      </div>
       </div>
     </main>
   );

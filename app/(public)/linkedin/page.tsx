@@ -6,8 +6,9 @@ const LINKEDIN_URL =
 
 export default function LinkedInPage() {
   return (
-    <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="max-w-xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 text-center">
+    <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+      <div className="mx-auto w-full max-w-[var(--container)]">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 text-center shadow-sm max-w-2xl mx-auto">
         <h1 className="text-[clamp(1.75rem,4vw,2.25rem)] font-semibold tracking-tight text-[var(--apple-text)]">
           LinkedIn Profile
         </h1>
@@ -29,6 +30,7 @@ export default function LinkedInPage() {
         <Link href="/profile" className="mt-6 inline-block text-sm link-apple">
           ← Back to Profile
         </Link>
+      </div>
       </div>
     </main>
   );

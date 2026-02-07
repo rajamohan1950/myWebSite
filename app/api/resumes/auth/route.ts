@@ -3,11 +3,12 @@ import { cookies } from "next/headers";
 import {
   COOKIE_NAME,
   getExpectedToken,
+  normalizeEnvPassword,
   tokenFromPassword,
 } from "@/lib/resumes-auth";
 
 export async function POST(request: NextRequest) {
-  const password = process.env.RESUMES_PASSWORD;
+  const password = normalizeEnvPassword(process.env.RESUMES_PASSWORD);
   if (!password) {
     return NextResponse.json(
       { error: "Resumes not configured (missing RESUMES_PASSWORD)" },
@@ -22,8 +23,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const submitted = body.password;
-  if (typeof submitted !== "string" || submitted.trim() === "") {
+  const submitted = typeof body.password === "string" ? body.password.trim() : "";
+  if (submitted === "") {
     return NextResponse.json({ error: "Password required" }, { status: 400 });
   }
 

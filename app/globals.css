@@ -27,11 +27,11 @@
   --card-border: var(--apple-border);
   --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 
-  /* Layout */
-  --container: 980px;
-  --container-wide: 1200px;
-  --space-page-y: clamp(3rem, 8vw, 6rem);
-  --space-page-x: clamp(1.5rem, 5vw, 2.5rem);
+  /* Layout: true full width like Apple — content uses full viewport width */
+  --container: calc(100vw - 2 * var(--space-page-x));
+  --container-wide: calc(100vw - 2 * var(--space-page-x));
+  --space-page-y: clamp(2rem, 5vw, 5rem);
+  --space-page-x: clamp(1rem, 4vw, 2.5rem);
   --apple-nav-height: 44px;
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
@@ -39,6 +39,10 @@
   --radius-lg: 18px;
   --focus-ring: 2px solid var(--apple-blue);
   --focus-offset: 2px;
+
+  /* Red sand background: image (replace with /red-sand-bg.jpg if you add one to public/) */
+  --red-sand-bg: linear-gradient(160deg, #c97a5c 0%, #b86548 25%, #a05038 50%, #8f4532 75%, #7a3828 100%);
+  --red-sand-bg-image: url("https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&q=80");
 
   /* Apple typography scale */
   --apple-font-display: 56px;
@@ -95,6 +99,8 @@
 /* ========== Base ========== */
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  min-height: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -102,10 +108,14 @@ html {
 }
 
 body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--apple-bg-secondary);
   color: var(--foreground);
+  box-sizing: border-box;
   font-family: var(--font-sans);
-  font-size: var(--apple-font-body);
+  font-size: clamp(15px, 2.2vw, var(--apple-font-body));
   line-height: 1.47059;
   font-weight: 400;
   letter-spacing: var(--apple-letter-body);
@@ -250,4 +260,29 @@ h1, h2, h3 {
   top: 1rem;
   outline: 2px solid white;
   outline-offset: 2px;
+}
+
+/* Red sand background on every page (main content area) */
+.page-with-red-sand {
+  background: var(--red-sand-bg);
+  background-image: var(--red-sand-bg-image);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Videos and iframes: always full width on all pages (posts, blog, products, etc.) */
+#main iframe,
+#main video,
+#main .prose iframe,
+#main .prose video {
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+}
+#main .aspect-video,
+#main .prose .aspect-video {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }

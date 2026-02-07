@@ -4,8 +4,9 @@ export default function BookACall() {
   const calendlyUrl = "https://calendly.com/jabbalarajamohan/55-min-meetup";
 
   return (
-    <main className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-[var(--space-page-y)]">
-      <div className="max-w-2xl rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10">
+    <main className="w-full px-[var(--space-page-x)] py-[var(--space-page-y)]">
+      <div className="mx-auto w-full max-w-[var(--container)]">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--apple-border)] bg-[var(--apple-bg)] p-8 sm:p-10 shadow-sm">
         <h1 className="text-[clamp(1.75rem,4vw,2.25rem)] font-semibold tracking-tight text-[var(--apple-text)]">
           Book a Call
         </h1>
@@ -35,6 +36,7 @@ export default function BookACall() {
         <Link href="/" className="mt-8 inline-block text-sm link-apple">
           ← Back to home
         </Link>
+      </div>
       </div>
     </main>
   );

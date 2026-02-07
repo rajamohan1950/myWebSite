@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { posts } from "@/lib/db/schema";
 import { desc, isNotNull } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 const YOUTUBE_EMBED = "https://www.youtube.com/embed/k2tL1DBVmPs";
 
 async function getLatestPost() {
@@ -19,24 +21,24 @@ export default async function Home() {
   const latestPost = await getLatestPost();
 
   return (
-    <main>
-      {/* 1. Video resume — first section, right below header (Apple hero style) */}
-      <section className="bg-[var(--apple-bg)]">
-        <div className="mx-auto max-w-[var(--container-wide)] px-[var(--space-page-x)] pt-12 pb-16 md:pt-16 md:pb-24">
+    <main className="w-full">
+      {/* 1. Video resume — red sand visible; content on top */}
+      <section className="w-full px-[var(--space-page-x)] pt-12 pb-16 md:pt-16 md:pb-24">
+        <div className="mx-auto w-full max-w-[var(--container-wide)]">
           <h2 className="apple-display text-center text-[var(--apple-text)]">
             Video resume
           </h2>
           <p className="apple-subhead mx-auto mt-4 max-w-[600px] text-center text-[var(--apple-text-secondary)]">
             A short introduction to my background and what I bring to the table.
           </p>
-          <div className="mx-auto mt-10 max-w-4xl">
-            <div className="aspect-video w-full overflow-hidden rounded-[var(--radius-lg)] bg-[var(--apple-bg-tertiary)]">
+          <div className="mx-auto mt-10 w-full">
+            <div className="aspect-video w-full overflow-hidden rounded-[var(--radius-lg)] bg-black/20 shadow-lg">
               <iframe
                 src={YOUTUBE_EMBED}
                 title="Video resume — Rajamohan Jabbala"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
-                className="h-full w-full"
+                className="h-full w-full min-w-0"
               />
             </div>
           </div>
@@ -48,9 +50,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 2. Latest from the blog — Apple product-section style */}
-      <section className="bg-[var(--apple-bg-tertiary)]">
-        <div className="mx-auto max-w-[var(--container-wide)] px-[var(--space-page-x)] py-16 md:py-24">
+      {/* 2. Latest from the blog — on red sand */}
+      <section className="w-full px-[var(--space-page-x)] py-16 md:py-24">
+        <div className="mx-auto w-full max-w-[var(--container-wide)]">
           <p className="apple-caption text-center font-semibold uppercase tracking-wider text-[var(--apple-text-secondary)]">
             From the blog
           </p>
@@ -96,9 +98,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 3. Name + tagline + CTAs — compact strip */}
-      <section className="border-t border-[var(--apple-border)] bg-[var(--apple-bg)]">
-        <div className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-14 md:py-20">
+      {/* 3. Name + tagline + CTAs — on red sand */}
+      <section className="w-full border-t border-white/20 px-[var(--space-page-x)] py-14 md:py-20">
+        <div className="mx-auto w-full max-w-[var(--container)]">
           <h1 className="apple-headline text-center text-[var(--apple-text)]">
             Rajamohan Jabbala
           </h1>
@@ -119,9 +121,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. What you can do here — grid with font/color variation */}
-      <section className="border-t border-[var(--apple-border)] bg-[var(--apple-bg-secondary)]">
-        <div className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-16 md:py-20">
+      {/* 4. What you can do here — cards on red sand */}
+      <section className="w-full border-t border-white/20 px-[var(--space-page-x)] py-16 md:py-20">
+        <div className="mx-auto w-full max-w-[var(--container)]">
           <p className="apple-caption text-center font-semibold uppercase tracking-wider text-[var(--apple-text-secondary)]">
             Explore
           </p>
@@ -157,9 +159,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 5. Footer — Apple style */}
-      <footer className="border-t border-[var(--apple-border)] bg-[var(--apple-bg-tertiary)]">
-        <div className="mx-auto max-w-[var(--container)] px-[var(--space-page-x)] py-10">
+      {/* 5. Footer — on red sand */}
+      <footer className="w-full border-t border-white/20 px-[var(--space-page-x)] py-10">
+        <div className="mx-auto w-full max-w-[var(--container)]">
           <p className="apple-caption text-center text-[var(--apple-text-secondary)]">
             © {new Date().getFullYear()} Rajamohan Jabbala. All rights reserved.
           </p>
