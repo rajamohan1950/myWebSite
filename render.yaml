@@ -1,0 +1,30 @@
+# Render Blueprint: one-click deploy with persistent disk
+# After connecting this repo in Render Dashboard → New → Blueprint, add custom domain in service Settings.
+services:
+  - type: web
+    name: my-website
+    runtime: node
+    plan: free
+    repo: https://github.com/rajamohan1950/myWebSite
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: /data/local.db
+      - key: UPLOADS_DIR
+        value: /data
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://www.rajamohanjabbala.com
+      - key: NEXT_PUBLIC_LINKEDIN_URL
+        value: https://www.linkedin.com/in/jabbalarajamohan
+      - key: RESUMES_PASSWORD
+        value: "123456"
+    domains:
+      - www.rajamohanjabbala.com

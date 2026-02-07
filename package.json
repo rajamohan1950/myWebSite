@@ -6,6 +6,7 @@
     "dev": "next dev -p 5001",
     "build": "next build",
     "start": "next start",
+    "start:prod": "drizzle-kit push && next start",
     "lint": "eslint",
     "test": "DATABASE_URL=test.db jest",
     "pretest": "DATABASE_URL=test.db npx drizzle-kit push",

@@ -1,0 +1,7 @@
+# Railway config: build and start for Next.js + SQLite
+[build]
+builder = "RAILPACK"
+buildCommand = "npm install && npm run build"
+
+[deploy]
+startCommand = "npm run start:prod"

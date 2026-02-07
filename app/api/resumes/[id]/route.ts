@@ -10,7 +10,9 @@ import { Readable } from "stream";
 import { promisify } from "util";
 
 const unlinkAsync = promisify(unlink);
-const UPLOAD_DIR = path.join(process.cwd(), "uploads", "resumes");
+const UPLOAD_DIR = process.env.UPLOADS_DIR
+  ? path.join(process.env.UPLOADS_DIR, "uploads", "resumes")
+  : path.join(process.cwd(), "uploads", "resumes");
 
 async function requireAuth() {
   const password = process.env.RESUMES_PASSWORD;

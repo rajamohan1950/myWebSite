@@ -8,7 +8,9 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 
-const UPLOAD_DIR = path.join(process.cwd(), "uploads", "resumes");
+const UPLOAD_DIR = process.env.UPLOADS_DIR
+  ? path.join(process.env.UPLOADS_DIR, "uploads", "resumes")
+  : path.join(process.cwd(), "uploads", "resumes");
 
 async function ensureUploadDir() {
   await mkdir(UPLOAD_DIR, { recursive: true });
