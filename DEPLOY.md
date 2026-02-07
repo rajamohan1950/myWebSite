@@ -1,10 +1,34 @@
 # Deploy to the cloud and use www.rajamohanjabbala.com
 
-Your app uses **SQLite** and **file uploads** (resumes), so you need a host that allows persistent storage. **Railway** and **Render** both support this and free tiers.
+Your app uses **SQLite** and **file uploads** (resumes), so you need a host with persistent storage. **Railway** (recommended) and **Render** support this.
 
 ---
 
-## One-command deploy (Railway, from this repo)
+## One-time setup → then every push auto-deploys (Railway)
+
+1. Go to **[railway.app](https://railway.app)** → **Login with GitHub**.
+2. **New Project** → **Deploy from GitHub repo** → select **rajamohan1950/myWebSite**.
+3. In the new service:
+   - **Settings** → **Volumes** → **Add Volume** → mount path **`/data`**.
+   - **Variables** → add:
+
+   | Variable | Value |
+   |----------|--------|
+   | `DATABASE_URL` | `/data/local.db` |
+   | `UPLOADS_DIR` | `/data` |
+   | `NEXT_PUBLIC_SITE_URL` | `https://www.rajamohanjabbala.com` |
+   | `NEXT_PUBLIC_LINKEDIN_URL` | `https://www.linkedin.com/in/jabbalarajamohan` |
+   | `RESUMES_PASSWORD` | *(your password)* |
+   | `NODE_ENV` | `production` |
+
+   - **Settings** → **Networking** → **Custom Domain** → add **`www.rajamohanjabbala.com`**.
+4. In your **DNS** (where rajamohanjabbala.com is managed): add **CNAME** `www` → target shown by Railway (e.g. `my-website-production.up.railway.app`).
+
+Build/start come from **railway.toml** in the repo. Every push to **main** triggers a new deploy. Optional: for CLI deploys from GitHub Actions, create a **Project Token** in Railway (Project → Settings), add it as **RAILWAY_TOKEN** in this repo’s **Secrets**; then `.github/workflows/deploy.yml` will run `railway up` on each push.
+
+---
+
+## One-command deploy (Railway, from your machine)
 
 From the project root, after logging in once:
 
