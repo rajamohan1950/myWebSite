@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       const message =
         err instanceof Error && err.message
           ? err.message
-          : "Storage failed. On Vercel set BLOB_READ_WRITE_TOKEN.";
+          : "Storage failed. On Vercel set BLOB_TEMPLATES_READ_WRITE_TOKEN.";
       console.error("putTemplate error:", err);
       return NextResponse.json({ error: message }, { status: 500 });
     }
