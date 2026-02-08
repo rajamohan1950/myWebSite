@@ -47,15 +47,21 @@ export default function TemplatesPage() {
         formData.append("file", file);
       }
       const res = await fetch("/api/templates", { method: "POST", body: formData });
-      const data = await res.json();
+      const text = await res.text();
+      let data: { error?: string } = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { error: res.ok ? undefined : text || `Upload failed (${res.status})` };
+      }
       if (!res.ok) {
-        setUploadError(data.error ?? "Upload failed");
+        setUploadError(data.error ?? `Upload failed (${res.status})`);
         return;
       }
       setUploadFiles([]);
       loadList();
-    } catch {
-      setUploadError("Upload failed");
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
     }
