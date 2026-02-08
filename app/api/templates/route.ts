@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { templates } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
-import { isAuthenticated, COOKIE_NAME, normalizeEnvPassword } from "@/lib/resumes-auth";
 import { putTemplate } from "@/lib/blob";
 import { randomUUID } from "crypto";
 import path from "path";
@@ -72,21 +70,8 @@ export async function GET() {
   return NextResponse.json(list);
 }
 
-/** POST /api/templates — upload (protected by same password as resumes) */
+/** POST /api/templates — upload (public, no auth; templates are separate from resumes) */
 export async function POST(request: NextRequest) {
-  const password = normalizeEnvPassword(process.env.RESUMES_PASSWORD);
-  if (!password) {
-    return NextResponse.json(
-      { error: "Templates upload not configured (set RESUMES_PASSWORD)." },
-      { status: 503 }
-    );
-  }
-  const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!isAuthenticated(token)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   let formData: FormData;
   try {
     formData = await request.formData();
