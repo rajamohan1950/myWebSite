@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
-import { resumes } from "@/lib/db/schema";
-import { desc } from "drizzle-orm";
+import { templates } from "@/lib/db/schema";
+import { desc, eq } from "drizzle-orm";
 import { isAuthenticated, COOKIE_NAME, normalizeEnvPassword } from "@/lib/resumes-auth";
-import { putResume } from "@/lib/blob";
+import { putTemplate } from "@/lib/blob";
 import { randomUUID } from "crypto";
 import path from "path";
 
-type FileLike = File | (Blob & { name?: string });
+const ALLOWED_EXT = [".pdf", ".doc", ".docx", ".html", ".htm"];
+const MIME: Record<string, string> = {
+  ".pdf": "application/pdf",
+  ".doc": "application/msword",
+  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ".html": "text/html",
+  ".htm": "text/html",
+};
 
+type FileLike = File | (Blob & { name?: string });
 function isFileLike(value: unknown): value is FileLike {
   return (
     value instanceof File ||
@@ -19,48 +27,57 @@ function isFileLike(value: unknown): value is FileLike {
       typeof (value as Blob).arrayBuffer === "function")
   );
 }
-
 function getFileName(value: FileLike): string {
-  if (value instanceof File) return value.name?.trim() || "resume";
-  return (value as Blob & { name?: string }).name?.trim() || "resume";
+  if (value instanceof File) return value.name?.trim() || "template";
+  return (value as Blob & { name?: string }).name?.trim() || "template";
 }
 
+function slugify(name: string): string {
+  const base = path.basename(name, path.extname(name)) || "doc";
+  return base
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || "doc";
+}
+
+/** Ensure unique slug: if exists, append -2, -3, ... */
+async function uniqueSlug(base: string): Promise<string> {
+  let slug = base;
+  let n = 2;
+  while (true) {
+    const [existing] = await db.select().from(templates).where(eq(templates.slug, slug));
+    if (!existing) return slug;
+    slug = `${base}-${n}`;
+    n += 1;
+  }
+}
+
+/** GET /api/templates — list all (public) */
 export async function GET() {
-  const password = normalizeEnvPassword(process.env.RESUMES_PASSWORD);
-  if (!password) {
-    return NextResponse.json(
-      { error: "Resumes not configured" },
-      { status: 503 }
-    );
-  }
-
-  const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!isAuthenticated(token)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const list = await db
     .select({
-      id: resumes.id,
-      displayName: resumes.displayName,
-      uploadedAt: resumes.uploadedAt,
+      id: templates.id,
+      slug: templates.slug,
+      displayName: templates.displayName,
+      mimeType: templates.mimeType,
+      uploadedAt: templates.uploadedAt,
     })
-    .from(resumes)
-    .orderBy(desc(resumes.uploadedAt));
-
+    .from(templates)
+    .orderBy(desc(templates.uploadedAt));
   return NextResponse.json(list);
 }
 
+/** POST /api/templates — upload (protected by same password as resumes) */
 export async function POST(request: NextRequest) {
   const password = normalizeEnvPassword(process.env.RESUMES_PASSWORD);
   if (!password) {
     return NextResponse.json(
-      { error: "Resumes not configured" },
+      { error: "Templates upload not configured (set RESUMES_PASSWORD)." },
       { status: 503 }
     );
   }
-
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!isAuthenticated(token)) {
@@ -70,7 +87,7 @@ export async function POST(request: NextRequest) {
   let formData: FormData;
   try {
     formData = await request.formData();
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Invalid form" }, { status: 400 });
   }
 
@@ -83,14 +100,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const allowed = [".pdf", ".doc", ".docx"];
-  const inserted: { id: number; displayName: string; uploadedAt: string }[] = [];
+  const inserted: { id: number; slug: string; displayName: string; uploadedAt: string }[] = [];
 
   for (const file of files) {
-    const name = getFileName(file) || "resume";
-    const ext = path.extname(name) || ".pdf";
-    if (!allowed.includes(ext.toLowerCase())) continue;
+    const name = getFileName(file) || "template";
+    const ext = path.extname(name).toLowerCase();
+    if (!ALLOWED_EXT.includes(ext)) continue;
 
+    const baseSlug = slugify(name);
+    const slug = await uniqueSlug(baseSlug);
     const storedFileName = `${randomUUID()}${ext}`;
     let buffer: Buffer;
     try {
@@ -99,22 +117,23 @@ export async function POST(request: NextRequest) {
       continue;
     }
     try {
-      await putResume(storedFileName, buffer);
+      await putTemplate(storedFileName, buffer);
     } catch (err) {
       const message =
         err instanceof Error && err.message
           ? err.message
-          : "Storage failed. On Vercel set BLOB_READ_WRITE_TOKEN. Locally set UPLOADS_DIR or BLOB_READ_WRITE_TOKEN.";
-      console.error("putResume error:", err);
+          : "Storage failed. On Vercel set BLOB_READ_WRITE_TOKEN.";
+      console.error("putTemplate error:", err);
       return NextResponse.json({ error: message }, { status: 500 });
     }
 
     const [row] = await db
-      .insert(resumes)
+      .insert(templates)
       .values({
+        slug,
         displayName: name,
         storedFileName,
-        mimeType: file.type || null,
+        mimeType: MIME[ext] || null,
         uploadedAt: new Date(),
       })
       .returning();
@@ -122,6 +141,7 @@ export async function POST(request: NextRequest) {
     if (row) {
       inserted.push({
         id: row.id,
+        slug: row.slug,
         displayName: row.displayName,
         uploadedAt: row.uploadedAt instanceof Date ? row.uploadedAt.toISOString() : String(row.uploadedAt),
       });
@@ -130,7 +150,7 @@ export async function POST(request: NextRequest) {
 
   if (inserted.length === 0) {
     return NextResponse.json(
-      { error: "Only PDF and Word documents allowed" },
+      { error: "Only PDF, Word (.doc/.docx), and HTML allowed." },
       { status: 400 }
     );
   }

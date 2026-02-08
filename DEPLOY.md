@@ -8,6 +8,21 @@
 
 ---
 
+## Re-deploy without losing any data
+
+A re-deploy **only replaces the running app with a new build** from your repo. It does **not** delete or reset:
+
+- **Vercel:** Turso (database) or Vercel Blob (resume files) — they stay as-is.
+- **Railway / Render:** The `/data` volume (SQLite DB and uploads) — it stays as-is.
+
+**Vercel:** Push to `main` already triggers a new deploy. To redeploy without a new commit: Vercel dashboard → your project → **Deployments** → ⋮ on the latest → **Redeploy** (use same commit). Or from your machine: `npx vercel --prod` (after `vercel link` once).
+
+**Railway:** Push to `main` triggers deploy if `RAILWAY_TOKEN` is set in GitHub Secrets. Or: Railway dashboard → your service → **Deployments** → **Redeploy**.
+
+**Important:** Do **not** delete the Turso database, the Vercel Blob store, or the Railway/Render volume. Only redeploy the application.
+
+---
+
 ## Deploy on Vercel (free)
 
 **No credit card.** Good for India (Vercel edge). DB = Turso (free SQLite), files = Vercel Blob (free tier).
@@ -45,7 +60,7 @@ turso db tokens create my-website-db   # copy the token
 
 5. **Custom domain:** Project → **Settings** → **Domains** → add **www.rajamohanjabbala.com**. Then in GoDaddy (or your DNS), use the **stable** target below — **never** point to a deployment URL like `my-website-xxxxx-rajamohans-projects.vercel.app`, because that changes on every deploy.
 
-Vercel Blob: in dashboard, **Storage** → **Create Database** → **Blob**; then in the Blob store, copy **BLOB_READ_WRITE_TOKEN** into the project env vars.
+Vercel Blob: in dashboard, **Storage** → **Create Database** → **Blob**; then in the Blob store, copy **BLOB_READ_WRITE_TOKEN** into the project env vars. Or run **one command** from your machine: create the Blob store in the dashboard, copy the token into `.env` as `BLOB_READ_WRITE_TOKEN=…`, then `npm run vercel:setup-resumes` (links project, pushes the token to Vercel, redeploys).
 
 ### GoDaddy DNS (one-time — URL never changes)
 

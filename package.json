@@ -11,6 +11,7 @@
     "test": "DATABASE_URL=test.db jest",
     "pretest": "DATABASE_URL=test.db npx drizzle-kit push",
     "test:all": "npm run build && npm test",
+    "vercel:setup-resumes": "node scripts/setup-vercel-blob.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"

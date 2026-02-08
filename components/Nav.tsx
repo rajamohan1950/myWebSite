@@ -9,6 +9,7 @@ const publicLinks = [
   { href: "/profile", label: "Profile" },
   { href: "/blog", label: "Blog" },
   { href: "/products", label: "Products" },
+  { href: "/templates", label: "Templates" },
   { href: "/linkedin", label: "LinkedIn" },
   { href: "/video-resume", label: "Video Resume" },
   { href: "/book-a-call", label: "Book a Call" },

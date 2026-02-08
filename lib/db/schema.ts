@@ -52,3 +52,15 @@ export const resumes = sqliteTable("resumes", {
 
 export type Resume = typeof resumes.$inferSelect;
 export type NewResume = typeof resumes.$inferInsert;
+
+export const templates = sqliteTable("templates", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slug: text("slug").notNull().unique(),
+  displayName: text("display_name").notNull(),
+  storedFileName: text("stored_file_name").notNull(),
+  mimeType: text("mime_type"),
+  uploadedAt: integer("uploaded_at", { mode: "timestamp" }).notNull(),
+});
+
+export type Template = typeof templates.$inferSelect;
+export type NewTemplate = typeof templates.$inferInsert;
