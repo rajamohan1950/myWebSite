@@ -88,7 +88,6 @@ export async function resumeExists(key: string): Promise<boolean> {
 }
 
 // --- Templates (separate blob store: BLOB_TEMPLATES_READ_WRITE_TOKEN) ---
-const TEMPLATES_PREFIX = "templates/";
 const BLOB_TEMPLATES_TOKEN = process.env.BLOB_TEMPLATES_READ_WRITE_TOKEN?.trim() || undefined;
 
 function ensureTemplatesStorageConfigured(): void {
@@ -103,7 +102,7 @@ export async function putTemplate(key: string, data: Buffer): Promise<void> {
   ensureTemplatesStorageConfigured();
   if (BLOB_TEMPLATES_TOKEN) {
     const { put } = await import("@vercel/blob");
-    await put(`${TEMPLATES_PREFIX}${key}`, data, {
+    await put(key, data, {
       access: "public",
       addRandomSuffix: false,
       token: BLOB_TEMPLATES_TOKEN,
@@ -125,11 +124,10 @@ export async function getTemplateStream(
   if (BLOB_TEMPLATES_TOKEN) {
     const { list } = await import("@vercel/blob");
     const blobs = await list({
-      prefix: TEMPLATES_PREFIX,
       limit: 1000,
       token: BLOB_TEMPLATES_TOKEN,
     });
-    const match = blobs.blobs.find((b) => b.pathname === `${TEMPLATES_PREFIX}${key}`);
+    const match = blobs.blobs.find((b) => b.pathname === key);
     if (!match?.url) return null;
     const r = await fetch(match.url);
     if (!r.body) return null;
@@ -151,11 +149,10 @@ export async function deleteTemplate(key: string): Promise<void> {
   if (BLOB_TEMPLATES_TOKEN) {
     const { list, del } = await import("@vercel/blob");
     const blobs = await list({
-      prefix: TEMPLATES_PREFIX,
       limit: 1000,
       token: BLOB_TEMPLATES_TOKEN,
     });
-    const match = blobs.blobs.find((b) => b.pathname === `${TEMPLATES_PREFIX}${key}`);
+    const match = blobs.blobs.find((b) => b.pathname === key);
     if (match?.url) await del(match.url);
     return;
   }

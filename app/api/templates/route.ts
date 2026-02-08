@@ -70,78 +70,99 @@ export async function GET() {
   return NextResponse.json(list);
 }
 
+function toErrorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === "string") return err;
+  return String(err);
+}
+
 /** POST /api/templates — upload (public, no auth; templates are separate from resumes) */
 export async function POST(request: NextRequest) {
-  let formData: FormData;
   try {
-    formData = await request.formData();
-  } catch {
-    return NextResponse.json({ error: "Invalid form" }, { status: 400 });
-  }
-
-  const fileList = formData.getAll("file");
-  const files = fileList.filter(isFileLike) as FileLike[];
-  if (files.length === 0) {
-    return NextResponse.json(
-      { error: "No files uploaded (use field name 'file')" },
-      { status: 400 }
-    );
-  }
-
-  const inserted: { id: number; slug: string; displayName: string; uploadedAt: string }[] = [];
-
-  for (const file of files) {
-    const name = getFileName(file) || "template";
-    const ext = path.extname(name).toLowerCase();
-    if (!ALLOWED_EXT.includes(ext)) continue;
-
-    const baseSlug = slugify(name);
-    const slug = await uniqueSlug(baseSlug);
-    const storedFileName = `${randomUUID()}${ext}`;
-    let buffer: Buffer;
+    let formData: FormData;
     try {
-      buffer = Buffer.from(await (file as File | Blob).arrayBuffer());
+      formData = await request.formData();
     } catch {
-      continue;
-    }
-    try {
-      await putTemplate(storedFileName, buffer);
-    } catch (err) {
-      const message =
-        err instanceof Error && err.message
-          ? err.message
-          : "Storage failed. Add BLOB_TEMPLATES_READ_WRITE_TOKEN in Vercel (Settings → Environment Variables) and redeploy.";
-      console.error("putTemplate error:", err);
-      return NextResponse.json({ error: message }, { status: 500 });
+      return NextResponse.json({ error: "Invalid form" }, { status: 400 });
     }
 
-    const [row] = await db
-      .insert(templates)
-      .values({
-        slug,
-        displayName: name,
-        storedFileName,
-        mimeType: MIME[ext] || null,
-        uploadedAt: new Date(),
-      })
-      .returning();
-
-    if (row) {
-      inserted.push({
-        id: row.id,
-        slug: row.slug,
-        displayName: row.displayName,
-        uploadedAt: row.uploadedAt instanceof Date ? row.uploadedAt.toISOString() : String(row.uploadedAt),
-      });
+    const fileList = formData.getAll("file");
+    const files = fileList.filter(isFileLike) as FileLike[];
+    if (files.length === 0) {
+      return NextResponse.json(
+        { error: "No files uploaded (use field name 'file')" },
+        { status: 400 }
+      );
     }
+
+    const inserted: { id: number; slug: string; displayName: string; uploadedAt: string }[] = [];
+
+    for (const file of files) {
+      const name = getFileName(file) || "template";
+      const ext = path.extname(name).toLowerCase();
+      if (!ALLOWED_EXT.includes(ext)) continue;
+
+      const baseSlug = slugify(name);
+      const slug = await uniqueSlug(baseSlug);
+      const storedFileName = `${randomUUID()}${ext}`;
+      let buffer: Buffer;
+      try {
+        buffer = Buffer.from(await (file as File | Blob).arrayBuffer());
+      } catch {
+        continue;
+      }
+      try {
+        await putTemplate(storedFileName, buffer);
+      } catch (err) {
+        const message = toErrorMessage(err);
+        console.error("putTemplate error:", err);
+        return NextResponse.json(
+          { error: `Storage: ${message}. Check BLOB_TEMPLATES_READ_WRITE_TOKEN in Vercel.` },
+          { status: 500 }
+        );
+      }
+
+      try {
+        const [row] = await db
+          .insert(templates)
+          .values({
+            slug,
+            displayName: name,
+            storedFileName,
+            mimeType: MIME[ext] || null,
+            uploadedAt: new Date(),
+          })
+          .returning();
+
+        if (row) {
+          inserted.push({
+            id: row.id,
+            slug: row.slug,
+            displayName: row.displayName,
+            uploadedAt: row.uploadedAt instanceof Date ? row.uploadedAt.toISOString() : String(row.uploadedAt),
+          });
+        }
+      } catch (err) {
+        const message = toErrorMessage(err);
+        console.error("templates db insert error:", err);
+        return NextResponse.json(
+          { error: `Database: ${message}. On production run: TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... npx drizzle-kit push` },
+          { status: 500 }
+        );
+      }
+    }
+
+    if (inserted.length === 0) {
+      return NextResponse.json(
+        { error: "Only PDF, Word (.doc/.docx), and HTML allowed." },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(inserted.length === 1 ? inserted[0] : { added: inserted }, { status: 201 });
+  } catch (err) {
+    const message = toErrorMessage(err);
+    console.error("templates POST error:", err);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  if (inserted.length === 0) {
-    return NextResponse.json(
-      { error: "Only PDF, Word (.doc/.docx), and HTML allowed." },
-      { status: 400 }
-    );
-  }
-
-  return NextResponse.json(inserted.length === 1 ? inserted[0] : { added: inserted }, { status: 201 });
 }
