@@ -60,6 +60,9 @@ export const templates = sqliteTable("templates", {
   storedFileName: text("stored_file_name").notNull(),
   mimeType: text("mime_type"),
   uploadedAt: integer("uploaded_at", { mode: "timestamp" }).notNull(),
+  viewCount: integer("view_count").default(0).notNull(),
+  downloadCount: integer("download_count").default(0).notNull(),
+  shareCount: integer("share_count").default(0).notNull(),
 });
 
 export type Template = typeof templates.$inferSelect;

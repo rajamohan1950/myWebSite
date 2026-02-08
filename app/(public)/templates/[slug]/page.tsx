@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { templates } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import { ShareTemplateButton } from "@/components/ShareTemplateButton";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -29,8 +30,11 @@ export default async function TemplateSlugPage({ params }: Props) {
         <h1 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold tracking-tight text-[var(--apple-text)] mb-2">
           {row.displayName}
         </h1>
-        <p className="text-sm text-[var(--apple-text-secondary)] mb-6">
+        <p className="text-sm text-[var(--apple-text-secondary)] mb-2">
           Unique URL: /templates/{row.slug}
+        </p>
+        <p className="text-sm text-[var(--apple-text-secondary)] mb-6">
+          Viewed {row.viewCount} · Downloaded {row.downloadCount} · Shared {row.shareCount}
         </p>
         <div className="flex flex-wrap gap-3">
           <a
@@ -39,7 +43,7 @@ export default async function TemplateSlugPage({ params }: Props) {
             rel="noopener noreferrer"
             className="inline-flex rounded-lg bg-[var(--apple-blue)] px-4 py-2.5 text-sm font-medium text-white hover:opacity-90"
           >
-            View in new tab
+            View
           </a>
           <a
             href={downloadUrl}
@@ -48,6 +52,12 @@ export default async function TemplateSlugPage({ params }: Props) {
           >
             Download
           </a>
+          <ShareTemplateButton
+            slug={row.slug}
+            className="inline-flex rounded-lg border border-[var(--apple-border)] bg-[var(--apple-bg-secondary)] px-4 py-2.5 text-sm font-medium text-[var(--apple-text)] hover:border-[var(--apple-link)]"
+          >
+            Share
+          </ShareTemplateButton>
         </div>
       </div>
     </main>

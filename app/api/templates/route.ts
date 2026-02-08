@@ -63,6 +63,9 @@ export async function GET() {
       displayName: templates.displayName,
       mimeType: templates.mimeType,
       uploadedAt: templates.uploadedAt,
+      viewCount: templates.viewCount,
+      downloadCount: templates.downloadCount,
+      shareCount: templates.shareCount,
     })
     .from(templates)
     .orderBy(desc(templates.uploadedAt));

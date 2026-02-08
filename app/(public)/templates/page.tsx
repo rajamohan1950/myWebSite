@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { ShareTemplateButton } from "@/components/ShareTemplateButton";
 
 type TemplateItem = {
   id: number;
@@ -9,6 +10,9 @@ type TemplateItem = {
   displayName: string;
   mimeType: string | null;
   uploadedAt: string;
+  viewCount: number;
+  downloadCount: number;
+  shareCount: number;
 };
 
 export default function TemplatesPage() {
@@ -73,12 +77,15 @@ export default function TemplatesPage() {
       }
       const added = data.added ?? [data];
       setList((prev) => [
-        ...added.map((a: TemplateItem) => ({
+        ...added.map((a: { id: number; slug: string; displayName: string; uploadedAt: string }) => ({
           id: a.id,
           slug: a.slug,
           displayName: a.displayName,
           mimeType: null,
           uploadedAt: a.uploadedAt,
+          viewCount: 0,
+          downloadCount: 0,
+          shareCount: 0,
         })),
         ...prev,
       ]);
@@ -117,6 +124,9 @@ export default function TemplatesPage() {
                 <p className="mt-1 text-xs text-[var(--apple-text-secondary)]">
                   {new Date(item.uploadedAt).toLocaleDateString()} · /templates/{item.slug}
                 </p>
+                <p className="mt-2 text-xs text-[var(--apple-text-secondary)]">
+                  Viewed {item.viewCount} · Downloaded {item.downloadCount} · Shared {item.shareCount}
+                </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <a
                     href={`/api/templates/${encodeURIComponent(item.slug)}?view=1`}
@@ -133,6 +143,12 @@ export default function TemplatesPage() {
                   >
                     Download
                   </a>
+                  <ShareTemplateButton
+                    slug={item.slug}
+                    className="inline-flex rounded-lg border border-[var(--apple-border)] px-3 py-2 text-sm font-medium text-[var(--apple-text)] hover:border-[var(--apple-link)]"
+                  >
+                    Share
+                  </ShareTemplateButton>
                   <Link
                     href={`/templates/${encodeURIComponent(item.slug)}`}
                     className="inline-flex rounded-lg border border-[var(--apple-border)] px-3 py-2 text-sm font-medium text-[var(--apple-link)] hover:underline"
